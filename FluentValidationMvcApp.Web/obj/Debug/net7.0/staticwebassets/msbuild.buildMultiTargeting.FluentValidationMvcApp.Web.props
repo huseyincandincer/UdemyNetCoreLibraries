@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\FluentValidationMvcApp.Web.props" />
+</Project>
