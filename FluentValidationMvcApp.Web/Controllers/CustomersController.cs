@@ -21,9 +21,9 @@ namespace FluentValidationMvcApp.Web.Controllers
         // GET: Customers
         public async Task<IActionResult> Index()
         {
-              return _context.Customers != null ? 
-                          View(await _context.Customers.ToListAsync()) :
-                          Problem("Entity set 'AppDbContext.Customers'  is null.");
+            return _context.Customers != null ?
+                        View(await _context.Customers.ToListAsync()) :
+                        Problem("Entity set 'AppDbContext.Customers'  is null.");
         }
 
         // GET: Customers/Details/5
@@ -55,7 +55,7 @@ namespace FluentValidationMvcApp.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Email,Age")] Customer customer)
+        public async Task<IActionResult> Create([Bind("Name,Email,Age,BirthDay")] Customer customer)
         {
             if (ModelState.IsValid)
             {
@@ -149,14 +149,14 @@ namespace FluentValidationMvcApp.Web.Controllers
             {
                 _context.Customers.Remove(customer);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool CustomerExists(int id)
         {
-          return (_context.Customers?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Customers?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
