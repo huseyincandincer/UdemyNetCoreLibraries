@@ -16,7 +16,10 @@ namespace FluentValidationMvcApp.Web.FluentValidator
             RuleFor(x => x.BirthDay).NotEmpty().WithMessage(NotEmptyMessage).Must(x =>
             {
                 return DateTime.Now.AddYears(-18) >= x;
-            }).WithMessage("Yaşınız 18'den büyük olmalıdır.");
+            }).WithMessage("Yaşınız 18'den büyük olmalıdır.");//Custom validator yazdık
+
+
+            RuleForEach(x => x.Addresses).SetValidator(new AddressValidator());//Customerlerın içindeki adresleri validate edebilmesi için bunun içinde set ettik
         }
     }
 }

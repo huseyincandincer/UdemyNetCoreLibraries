@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews().AddFluentValidation(options =>
 {
-    options.RegisterValidatorsFromAssemblyContaining<Program>();
+    options.RegisterValidatorsFromAssemblyContaining<Program>();    //Validator sýnýflarýný app tanýyabilmesi için ve bu iþlem otomatik gerçekleþmesi için yazdýk
 });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
