@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FluentValidationMvcApp.Web.Models;
+using FluentValidation;
 
 namespace FluentValidationMvcApp.Web.Controllers
 {
@@ -15,19 +16,22 @@ namespace FluentValidationMvcApp.Web.Controllers
     {
         private readonly AppDbContext _context;
 
-        public CustomersApiController(AppDbContext context)
+        private readonly IValidator<Customer> _customerValidator;
+
+        public CustomersApiController(AppDbContext context, IValidator<Customer> customerValidator)
         {
             _context = context;
+            _customerValidator = customerValidator;
         }
 
         // GET: api/CustomersApi
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Customer>>> GetCustomers()
         {
-          if (_context.Customers == null)
-          {
-              return NotFound();
-          }
+            if (_context.Customers == null)
+            {
+                return NotFound();
+            }
             return await _context.Customers.ToListAsync();
         }
 
@@ -35,10 +39,10 @@ namespace FluentValidationMvcApp.Web.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Customer>> GetCustomer(int id)
         {
-          if (_context.Customers == null)
-          {
-              return NotFound();
-          }
+            if (_context.Customers == null)
+            {
+                return NotFound();
+            }
             var customer = await _context.Customers.FindAsync(id);
 
             if (customer == null)
@@ -85,10 +89,20 @@ namespace FluentValidationMvcApp.Web.Controllers
         [HttpPost]
         public async Task<ActionResult<Customer>> PostCustomer(Customer customer)
         {
-          if (_context.Customers == null)
-          {
-              return Problem("Entity set 'AppDbContext.Customers'  is null.");
-          }
+            var result = _customerValidator.Validate(customer);
+
+            if (!result.IsValid)
+            {
+                return BadRequest(result.Errors.Select(x => new { property = x.PropertyName, error = x.ErrorMessage }));
+            }
+
+
+
+
+            if (_context.Customers == null)
+            {
+                return Problem("Entity set 'AppDbContext.Customers'  is null.");
+            }
             _context.Customers.Add(customer);
             await _context.SaveChangesAsync();
 
